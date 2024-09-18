@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-5 mx-auto">
+    <h1 class="mb-4 text-2xl font-bold">Welcome, {{ user.username }}</h1>
+
+    <!-- Display admin-related actions if the user is an admin -->
+    {% if session['is_admin'] %}
+        <div class="alert alert-info bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative">
+            You are logged in as an admin. 
+            <a href="{{ url_for('admin_dashboard') }}" class="alert-link text-blue-600 underline">Go to Admin Dashboard</a>
+        </div>
+    {% else %}
+        <div class="alert alert-secondary bg-gray-100 border border-gray-400 text-gray-700 px-4 py-3 rounded relative">
+            You are logged in as a regular user.
+        </div>
+    {% endif %}
+
+    <h2 class="mt-4 text-xl font-semibold">Your Books</h2>
+
+    <ul class="list-group mb-4">
+        {% for book in books %}
+            <li class="list-group-item d-flex justify-between items-center bg-white shadow-md p-4 mb-2 rounded">
+                <span>{{ book.title }}</span>
+                <div class="flex items-center">
+                    {% if book.image %}
+                        <img src="{{ url_for('book_image', book_id=book.id) }}" alt="{{ book.title }}" width="50" class="mr-3 rounded">
+                    {% endif %}
+                    <a href="{{ url_for('remove_book', book_id=book.id) }}" class="badge badge-danger bg-red-500 text-white py-1 px-3 rounded-full">Remove</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <!-- Form to add a new book with image upload -->
+    <form action="{{ url_for('add_book') }}" method="post" class="form-inline mb-4 flex items-center" enctype="multipart/form-data">
+        <div class="form-group mr-2">
+            <input type="text" name="title" class="form-control border border-gray-300 p-2 rounded" placeholder="Enter book title" required>
+        </div>
+        <div class="form-group mr-2">
+            <input type="file" name="image" class="form-control-file p-2 bg-white border border-gray-300 rounded" required>
+        </div>
+        <button type="submit" class="btn btn-success bg-green-500 text-white py-2 px-4 rounded">Add Book</button>
+    </form>
+
+    <a href="{{ url_for('logout') }}" class="btn btn-danger bg-red-500 text-white py-2 px-4 rounded">Logout</a>
+</div>
+{% endblock %}
